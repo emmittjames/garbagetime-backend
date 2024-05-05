@@ -1,2 +1,3 @@
 fastapi[all]
 paho-mqtt
+fastapi-mqtt
