@@ -3,12 +3,9 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import base64
-import configparser
-from datetime import datetime
-import json
-import struct
+import base64, configparser, json, struct, random
 import paho.mqtt.client as mqtt
+from datetime import datetime
 
 global_distance = -1
 
@@ -89,5 +86,6 @@ app.add_middleware(
 async def root():
     return {
         "message": "Hello World",
+        "temp": random.randint(0, 100),
         "distance": global_distance,
     }
