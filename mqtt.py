@@ -1,16 +1,12 @@
-from typing import Optional
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+#!/usr/bin/env python3
 
 import base64
 import configparser
 from datetime import datetime
 import json
 import struct
-import paho.mqtt.client as mqtt
 
-global_distance = -1
+import paho.mqtt.client as mqtt
 
 # Read in config file with MQTT details.
 config = configparser.ConfigParser()
@@ -55,7 +51,6 @@ def on_message(client, userdata, message):
     print("ID:",raw_payload[0])
     float_value = struct.unpack('!f',raw_payload[1:])[0]
     print("Distance:",float_value)
-    global_distance = float_value
     # RIGHT HERE: send http packet to frontend
     # requests.post(frontendurl, payload)
 
@@ -72,22 +67,6 @@ client.username_pw_set(username, password)
 client.tls_set()
 client.connect(broker_address, 8883)
 
+# Subscribe to the MQTT topic and start the MQTT client loop
 client.subscribe(topic)
 client.loop_forever()
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["*"],
-)
-
-@app.get("/")
-async def root():
-    return {
-        "message": "Hello World",
-        "distance": global_distance,
-    }
